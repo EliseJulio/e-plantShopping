@@ -11,11 +11,17 @@ const cartSlice = createSlice({
       if (existingItem) {
         existingItem.quantity += 1;
       } else {
-        state.items.push({ ...action.payload, quantity: 1 });
+        state.items.push({
+          ...action.payload,
+          cost: action.payload.cost ?? action.payload.price,
+          quantity: 1
+        });
       }
     },
     removeItem(state, action) {
-      state.items = state.items.filter((item) => item.id !== action.payload);
+      state.items = state.items.filter(
+        (item) => item.id !== action.payload && item.name !== action.payload
+      );
     },
     updateQuantity(state, action) {
       const { id, quantity } = action.payload;

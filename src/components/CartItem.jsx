@@ -1,17 +1,26 @@
 import { useDispatch, useSelector } from 'react-redux';
 import { removeItem, updateQuantity } from '../features/cart/CartSlice.jsx';
+import { Navbar } from './ProductList.jsx';
 
-export default function CartItem({ onContinueShopping }) {
+export default function CartItem({ onContinueShopping, onNavigate }) {
   const cart = useSelector((state) => state.cart.items);
   const dispatch = useDispatch();
-  const total = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
+  const total = cart.reduce((sum, item) => sum + item.cost * item.quantity, 0);
 
   function handleIncrement(id, quantity) {
     dispatch(updateQuantity({ id, quantity: quantity + 1 }));
   }
 
   function handleDecrement(id, quantity) {
-    if (quantity > 1) dispatch(updateQuantity({ id, quantity: quantity - 1 }));
+    if (quantity > 1) {
+      dispatch(updateQuantity({ id, quantity: quantity - 1 }));
+    } else {
+      dispatch(removeItem(id));
+    }
+  }
+
+  function handleRemove(item) {
+    dispatch(removeItem(item.name));
   }
 
   function handleContinueShopping(event) {
@@ -21,16 +30,21 @@ export default function CartItem({ onContinueShopping }) {
 
   if (cart.length === 0) {
     return (
+      <>
+      <Navbar currentPage="cart" onNavigate={onNavigate} />
       <section className="cart-container empty-cart" aria-labelledby="cart-title">
         <p className="eyebrow">Your basket</p>
         <h2 id="cart-title">Your cart is taking a little breather.</h2>
         <p>Find a leafy friend and it will show up here.</p>
         <button className="button get-started-button" onClick={handleContinueShopping} type="button">Continue Shopping</button>
       </section>
+      </>
     );
   }
 
   return (
+    <>
+    <Navbar currentPage="cart" onNavigate={onNavigate} />
     <section className="cart-container" aria-labelledby="cart-title">
       <div className="section-heading">
         <div>
@@ -48,8 +62,8 @@ export default function CartItem({ onContinueShopping }) {
               <img className="cart-item-image" src={item.image} alt={item.name} />
               <div className="cart-line-info">
                 <h3>{item.name}</h3>
-                <p>Unit price: ${item.price.toFixed(2)}</p>
-                <button className="remove-button" onClick={() => dispatch(removeItem(item.id))} type="button">
+                <p>Unit price: ${item.cost.toFixed(2)}</p>
+                <button className="remove-button cart-item-delete" onClick={() => handleRemove(item)} type="button">
                   Delete
                 </button>
               </div>
@@ -58,7 +72,7 @@ export default function CartItem({ onContinueShopping }) {
                 <span>{item.quantity}</span>
                 <button aria-label={`Increase ${item.name} quantity`} onClick={() => handleIncrement(item.id, item.quantity)} type="button">+</button>
               </div>
-              <strong className="line-total">${(item.price * item.quantity).toFixed(2)}</strong>
+              <strong className="line-total">${(item.cost * item.quantity).toFixed(2)}</strong>
             </article>
           ))}
         </div>
@@ -67,12 +81,13 @@ export default function CartItem({ onContinueShopping }) {
           <div><span>Subtotal</span><strong>${total.toFixed(2)}</strong></div>
           <div><span>Delivery</span><strong>Calculated at checkout</strong></div>
           <div className="summary-total"><span>Total</span><strong>${total.toFixed(2)}</strong></div>
-          <button className="button checkout-button" onClick={() => window.alert('Checkout Coming Soon!')} type="button">
+          <button className="button checkout-button get-started-button1" onClick={() => window.alert('Checkout Coming Soon!')} type="button">
             Checkout
           </button>
           <p className="checkout-note">Plant happiness, packed with care.</p>
         </aside>
       </div>
     </section>
+    </>
   );
 }

@@ -26,7 +26,7 @@ export default function App() {
 
   return (
     <div className="app-container">
-      <Navbar currentPage={currentPage} onNavigate={handleNavigate} />
+      {!showProductList && !showCart && <Navbar currentPage={currentPage} onNavigate={handleNavigate} />}
 
       {!showProductList && !showCart && !showAbout && (
         <main id="home">
@@ -50,9 +50,9 @@ export default function App() {
           <AboutUs />
         </main>
       )}
-      {showProductList && <main><ProductList /></main>}
+      {showProductList && <main><ProductList onNavigate={handleNavigate} /></main>}
       {showAbout && <main><AboutUs /></main>}
-      {showCart && <main><CartItem onContinueShopping={handleGetStartedClick} /></main>}
+      {showCart && <main><CartItem onContinueShopping={handleGetStartedClick} onNavigate={handleNavigate} /></main>}
 
       <footer className="site-footer">
         <span>Paradise Nursery</span>

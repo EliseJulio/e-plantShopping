@@ -57,10 +57,10 @@ const allPlants = plantsArray.flatMap(({ category, plants }) =>
 
 export function Navbar({ currentPage, onNavigate }) {
   const cartItems = useSelector((state) => state.cart.items);
-  const cartQuantity = cartItems.reduce((total, item) => total + item.quantity, 0);
+  const cart_quantity_count = cartItems.reduce((total, item) => total + item.quantity, 0);
 
   return (
-    <header className="site-header">
+    <header className="navbar site-header">
       <a className="brand" href="#home" onClick={(event) => { event.preventDefault(); onNavigate('home'); }}>
         <span className="brand-mark" aria-hidden="true">✿</span>
         <span>Paradise <em>Nursery</em></span>
@@ -69,17 +69,18 @@ export function Navbar({ currentPage, onNavigate }) {
         <button className={currentPage === 'home' ? 'nav-link active' : 'nav-link'} onClick={() => onNavigate('home')} type="button">Home</button>
         <button className={currentPage === 'shop' ? 'nav-link active' : 'nav-link'} onClick={() => onNavigate('shop')} type="button">Plants</button>
         <button className={currentPage === 'about' ? 'nav-link active' : 'nav-link'} onClick={() => onNavigate('about')} type="button">About</button>
-        <button className={currentPage === 'cart' ? 'cart-link active' : 'cart-link'} onClick={() => onNavigate('cart')} type="button" aria-label={`Cart, ${cartQuantity} items`}>
-          <span className="cart-icon" aria-hidden="true">🛒</span> Cart <span className="cart-quantity">{cartQuantity}</span>
+        <button className={currentPage === 'cart' ? 'cart-link active' : 'cart-link'} onClick={() => onNavigate('cart')} type="button" aria-label={`Cart, ${cart_quantity_count} items`}>
+          <span className="cart-icon" aria-hidden="true">🛒</span> Cart <span className="cart_quantity_count">{cart_quantity_count}</span>
         </button>
       </nav>
     </header>
   );
 }
 
-export default function ProductList() {
+export default function ProductList({ onNavigate }) {
   const dispatch = useDispatch();
   const cartItems = useSelector((state) => state.cart.items);
+  const cart_quantity_count = cartItems.reduce((total, item) => total + item.quantity, 0);
   const addedToCart = Object.fromEntries(cartItems.map((item) => [item.name, true]));
   const [category, setCategory] = useState('All plants');
   const [search, setSearch] = useState('');
@@ -93,11 +94,14 @@ export default function ProductList() {
   );
 
   return (
+    <>
+    <Navbar currentPage="shop" onNavigate={onNavigate} />
     <section className="catalog-section" aria-labelledby="catalog-title">
       <div className="section-heading">
         <div>
           <p className="eyebrow">Find your new favorite</p>
           <h2 id="catalog-title">Plants for every kind of home</h2>
+          <p className="cart-count-summary">Plants in your cart: <span className="cart_quantity_count">{cart_quantity_count}</span></p>
         </div>
         <label className="search-label">
           <span className="sr-only">Search plants</span>
@@ -151,5 +155,6 @@ export default function ProductList() {
         })}
       {visiblePlants.length === 0 && <p className="empty-state">No plants match that search. Try another name.</p>}
     </section>
+    </>
   );
 }
