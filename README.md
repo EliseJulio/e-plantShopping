@@ -1,6 +1,6 @@
-# Paradise Nursery
+# e-plantShopping — Paradise Nursery
 
-Paradise Nursery is a plant shop application for discovering indoor plants and managing a shopping cart. Browse the catalog, add plants to your cart, adjust quantities, and review the order total before checkout.
+e-plantShopping is the Paradise Nursery plant shop application. Discover indoor plants across curated categories, add plants to a shopping cart, adjust quantities, and review the order total before checkout.
 
 ## Run locally
 

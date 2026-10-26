@@ -1,6 +1,6 @@
 export default function AboutUs() {
   return (
-    <section className="about-section" aria-labelledby="about-title">
+    <div className="about-us-container" aria-labelledby="about-title">
       <p className="eyebrow">Rooted in care</p>
       <h2 id="about-title">A little more green, a lot more joy.</h2>
       <p>
@@ -13,6 +13,6 @@ export default function AboutUs() {
         From resilient first plants to leafy statement pieces, our team is here to
         help you find the right plant for your space, your light, and your life.
       </p>
-    </section>
+    </div>
   );
 }

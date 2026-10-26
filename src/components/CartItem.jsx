@@ -2,52 +2,62 @@ import { useDispatch, useSelector } from 'react-redux';
 import { removeItem, updateQuantity } from '../features/cart/CartSlice.jsx';
 
 export default function CartItem({ onContinueShopping }) {
-  const items = useSelector((state) => state.cart.items);
+  const cart = useSelector((state) => state.cart.items);
   const dispatch = useDispatch();
-  const total = items.reduce((sum, item) => sum + item.price * item.quantity, 0);
+  const total = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
 
-  if (items.length === 0) {
+  function handleIncrement(id, quantity) {
+    dispatch(updateQuantity({ id, quantity: quantity + 1 }));
+  }
+
+  function handleDecrement(id, quantity) {
+    if (quantity > 1) dispatch(updateQuantity({ id, quantity: quantity - 1 }));
+  }
+
+  function handleContinueShopping(event) {
+    event.preventDefault();
+    onContinueShopping();
+  }
+
+  if (cart.length === 0) {
     return (
-      <section className="cart-section empty-cart" aria-labelledby="cart-title">
+      <section className="cart-container empty-cart" aria-labelledby="cart-title">
         <p className="eyebrow">Your basket</p>
         <h2 id="cart-title">Your cart is taking a little breather.</h2>
         <p>Find a leafy friend and it will show up here.</p>
-        <button className="button" onClick={onContinueShopping} type="button">Explore plants</button>
+        <button className="button get-started-button" onClick={handleContinueShopping} type="button">Continue Shopping</button>
       </section>
     );
   }
 
   return (
-    <section className="cart-section" aria-labelledby="cart-title">
+    <section className="cart-container" aria-labelledby="cart-title">
       <div className="section-heading">
         <div>
           <p className="eyebrow">Your basket</p>
           <h2 id="cart-title">A little green is on its way</h2>
         </div>
-        <button className="text-button" onClick={onContinueShopping} type="button">Continue shopping</button>
+        <button className="text-button get-started-button" onClick={handleContinueShopping} type="button">
+          Continue Shopping
+        </button>
       </div>
       <div className="cart-layout">
         <div className="cart-lines">
-          {items.map((item) => (
-            <article className="cart-line" key={item.id}>
-              <div className="cart-plant-icon" aria-hidden="true">✿</div>
+          {cart.map((item) => (
+            <article className="cart-item" key={item.id}>
+              <img className="cart-item-image" src={item.image} alt={item.name} />
               <div className="cart-line-info">
                 <h3>{item.name}</h3>
-                <p>${item.price.toFixed(2)} each</p>
+                <p>Unit price: ${item.price.toFixed(2)}</p>
                 <button className="remove-button" onClick={() => dispatch(removeItem(item.id))} type="button">
-                  Remove
+                  Delete
                 </button>
               </div>
-              <label className="quantity-control">
-                <span>Qty</span>
-                <input
-                  aria-label={`Quantity for ${item.name}`}
-                  min="1"
-                  onChange={(event) => dispatch(updateQuantity({ id: item.id, quantity: event.target.value }))}
-                  type="number"
-                  value={item.quantity}
-                />
-              </label>
+              <div className="quantity-stepper" aria-label={`Quantity for ${item.name}`}>
+                <button aria-label={`Decrease ${item.name} quantity`} disabled={item.quantity <= 1} onClick={() => handleDecrement(item.id, item.quantity)} type="button">−</button>
+                <span>{item.quantity}</span>
+                <button aria-label={`Increase ${item.name} quantity`} onClick={() => handleIncrement(item.id, item.quantity)} type="button">+</button>
+              </div>
               <strong className="line-total">${(item.price * item.quantity).toFixed(2)}</strong>
             </article>
           ))}
@@ -57,8 +67,8 @@ export default function CartItem({ onContinueShopping }) {
           <div><span>Subtotal</span><strong>${total.toFixed(2)}</strong></div>
           <div><span>Delivery</span><strong>Calculated at checkout</strong></div>
           <div className="summary-total"><span>Total</span><strong>${total.toFixed(2)}</strong></div>
-          <button className="button checkout-button" onClick={() => window.alert('Thanks for growing with us!')} type="button">
-            Continue to checkout
+          <button className="button checkout-button" onClick={() => window.alert('Checkout Coming Soon!')} type="button">
+            Checkout
           </button>
           <p className="checkout-note">Plant happiness, packed with care.</p>
         </aside>
